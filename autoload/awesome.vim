@@ -9,7 +9,8 @@ if !exists('g:awesome_dict_extra')
         \ 'The art of command line': 'jlevy/the-art-of-command-line',
         \ 'HEAD': 'joshbuchea/HEAD',
         \ 'Engineering blogs': 'kilimchoi/engineering-blogs',
-        \ 'Beautiful Docs': 'PharkMillups/beautiful-docs'
+        \ 'Beautiful Docs': 'PharkMillups/beautiful-docs',
+        \ 'Useful Java Links': 'Vedenin/useful-java-links'
         \ }
 endif
 
