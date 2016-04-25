@@ -28,9 +28,11 @@ fu! awesome#update()
   let pat =  '\v\[([^\]]+)\]\(https://github.com/([^\)]+/awesome-[^\)]+)\)'
   for line in lines
     let seg = matchstr(line, pat)
-    let key = substitute(seg, pat, '\1', '')
-    let val = substitute(seg, pat, '\2', '')
-    let result[key] = val
+    if !empty(seg)
+      let key = substitute(seg, pat, '\1', '')
+      let val = substitute(seg, pat, '\2', '')
+      let result[key] = val
+    endif
   endfor
   call writefile(split(string(result), '\n'), g:awesome_dict_cache)
   unlet s:awesome_dict
