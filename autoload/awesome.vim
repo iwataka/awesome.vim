@@ -8,7 +8,8 @@ if !exists('g:awesome_dict_extra')
   let g:awesome_dict_extra = {
         \ 'The art of command line': 'jlevy/the-art-of-command-line',
         \ 'HEAD': 'joshbuchea/HEAD',
-        \ 'Engineering blogs': 'kilimchoi/engineering-blogs'
+        \ 'Engineering blogs': 'kilimchoi/engineering-blogs',
+        \ 'Beautiful Docs': 'PharkMillups/beautiful-docs'
         \ }
 endif
 
