@@ -2,7 +2,7 @@ let s:save_cpo = &cpoptions
 set cpoptions&vim
 
 if !exists('g:awesome_dict_cache')
-  let g:awesome_dict_cache = expand('~/.cache/awesome.vim/cache')
+  let g:awesome_dict_cache = expand('~/.cache/awesome.vim')
 endif
 if !exists('g:awesome_dict_extra')
   let g:awesome_dict_extra = {
@@ -13,18 +13,18 @@ if !exists('g:awesome_dict_extra')
         \ 'Useful Java Links': 'Vedenin/useful-java-links'
         \ }
 endif
-
-let s:awesome_default_owner = 'sindresorhus'
-let s:awesome_default_repo = 'awesome'
+if !exists('g:awesome_default_identifier')
+  let g:awesome_default_identifier = 'sindresorhus/awesome'
+endif
 
 fu! awesome#execute(key)
-  let dest = get(s:awesome_dict(), a:key, s:awesome_default_owner.'/'.s:awesome_default_repo)
-  call github#readme#open(dest)
+  let dest = get(s:awesome_dict(), a:key, g:awesome_default_identifier)
+  call s:github_open(dest)
 endfu
 
 fu! awesome#update()
-  let readme = github#readme#get(s:awesome_default_owner, s:awesome_default_repo)
-  let lines = github#readme#decode(readme)
+  let readme = s:github_readme(g:awesome_default_identifier)
+  let lines = s:github_decode(readme)
   let result = {}
   let pat =  '\v\[([^\]]+)\]\(https://github.com/([^\)]+/awesome-[^\)]+)\)'
   for line in lines
@@ -35,8 +35,8 @@ fu! awesome#update()
       let result[key] = val
     endif
   endfor
-  call writefile(split(string(result), '\n'), g:awesome_dict_cache)
-  unlet s:awesome_dict
+  call writefile(split(string(result), '\n'), s:cache_file())
+  unlet! s:awesome_dict
 endfu
 
 fu! awesome#complete(A, L, P)
@@ -44,17 +44,82 @@ fu! awesome#complete(A, L, P)
 endfu
 
 fu! s:awesome_dict()
-  if !isdirectory(fnamemodify(g:awesome_dict_cache, ':h'))
-    call mkdir(fnamemodify(g:awesome_dict_cache, ':h'), 'p')
+  let cache = s:cache_file()
+  if !isdirectory(g:awesome_dict_cache)
+    call mkdir(g:awesome_dict_cache, 'p')
   endif
-  if !filereadable(g:awesome_dict_cache)
-    call s:update_awesome()
+  if !filereadable(cache)
+    call awesome#update()
   endif
   if !exists('s:awesome_dict')
-    let s:awesome_dict = eval(join(readfile(g:awesome_dict_cache)))
+    let s:awesome_dict = eval(join(readfile(cache)))
     call extend(s:awesome_dict, g:awesome_dict_extra)
   endif
   return s:awesome_dict
+endfu
+
+fu! s:cache_file()
+  return substitute(g:awesome_dict_cache, '\v/+$', '', '').'cache.txt'
+endfu
+
+fu! s:github_fname(identifier)
+  return 'github://'.a:identifier
+endfu
+
+fu! s:github_open(identifier)
+  let fname = s:github_fname(a:identifier)
+  if bufexists(fname)
+    exe 'edit '.fname
+  elseif a:identifier =~ '\v[^/]+/[^/]+'
+    call s:github_open_readme(a:identifier)
+  endif
+endfu
+
+fu! s:github_open_readme(identifier)
+  let readme = s:github_readme(a:identifier)
+  noswapfile enew
+  setlocal buftype=nofile
+  silent exe 'file '.s:github_fname(a:identifier)
+  call s:set_filetype(readme.name)
+
+  " See http://vim.wikia.com/wiki/Newlines_and_nulls_in_Vim_script
+  setlocal modifiable
+  setlocal noreadonly
+  if line('$') != 0
+    call append(0, s:github_decode(readme))
+    normal! gg
+  endif
+
+  setlocal nomodifiable
+  setlocal readonly
+  if exists('#AwesomeNew')
+    doautocmd AwesomeNew
+  endif
+endfu
+
+fu! s:set_filetype(fname)
+  let ext = fnamemodify(a:fname, ':e')
+  if ext =~ '\vmd|markdown'
+    setlocal ft=markdown
+  elseif ext =~ '\vadoc|asciidoc'
+    setlocal ft=asciidoc
+  elseif ext =~ '\vrst'
+    setlocal ft=rst
+  endif
+endfu
+
+fu! s:github_readme(identifier)
+  let url = 'https://api.github.com/repos/'.a:identifier.'/readme'
+  let reply = webapi#http#get(url)
+  return webapi#json#decode(reply.content)
+endfu
+
+fu! s:github_decode(readme)
+  let content = substitute(a:readme.content, '\n', '', 'g')
+  if a:readme.encoding == 'base64'
+    let content = webapi#base64#b64decode(content)
+  endif
+  return split(content, '\n')
 endfu
 
 let &cpo = s:save_cpo

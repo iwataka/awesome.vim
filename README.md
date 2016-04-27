@@ -2,7 +2,12 @@
 
 Awesome.vim enables you to view awesome-*foo* from Vim
 
-## Requirements
+## Installation
 
-+ [github.vim](https://github.com/iwataka/github.vim)
-+ [webapi-vim](https://github.com/mattn/webapi-vim)
+I recommend to use [vim-plug](https://github.com/junegunn/vim-plug/) if you
+don't have your favorite plug-in manager.
+
+```vim
+Plug 'mattn/webapi-vim'
+Plug 'iwataka/awesome.vim'
+```

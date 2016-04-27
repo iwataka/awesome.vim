@@ -22,7 +22,30 @@ USAGE                                                            *awesome-usage*
 
 ==============================================================================
 OPTIONS                                                        *awesome-options*
-
+                                                          *g:awesome_dict_cache*
+>
+    let g:awesome_dict_cache = expand('~/.cache/awesome.vim')
+<
+This specifies the directory including cache files this uses.
+------------------------------------------------------------------------------
+                                                          *g:awesome_dict_extra*
+>
+    let g:awesome_dict_extra = {
+          \ 'The art of command line': 'jlevy/the-art-of-command-line',
+          \ 'HEAD': 'joshbuchea/HEAD',
+          \ 'Engineering blogs': 'kilimchoi/engineering-blogs',
+          \ 'Beautiful Docs': 'PharkMillups/beautiful-docs',
+          \ 'Useful Java Links': 'Vedenin/useful-java-links'
+          \ }
+<
+This extracts the curated-list candidates from `g:awesome_default_identifier`
+and this dictionary means the extra ones.
+------------------------------------------------------------------------------
+                                                  *g:awesome_default_identifier*
+>
+    let g:awesome_default_identifier = 'sindresorhus/awesome'
+<
+The default curated list which contains other awesome curated lists.
 ==============================================================================
 COMMAND                                                       *awesome-commands*
 
