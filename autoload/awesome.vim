@@ -10,7 +10,8 @@ if !exists('g:awesome_dict_extra')
         \ 'HEAD': 'joshbuchea/HEAD',
         \ 'Engineering blogs': 'kilimchoi/engineering-blogs',
         \ 'Beautiful Docs': 'PharkMillups/beautiful-docs',
-        \ 'Useful Java Links': 'Vedenin/useful-java-links'
+        \ 'Useful Java Links': 'Vedenin/useful-java-links',
+        \ 'Vim Galore': 'mhinz/vim-galore'
         \ }
 endif
 if !exists('g:awesome_default_identifier')
