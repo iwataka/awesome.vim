@@ -27,7 +27,7 @@ fu! awesome#update()
   let readme = s:github_readme(g:awesome_default_identifier)
   let lines = s:github_decode(readme)
   let result = {}
-  let pat =  '\v\[([^\]]+)\]\(https://github.com/([^\)]+/awesome-[^\)]+)\)'
+  let pat =  '\v\[([^\]]+)\]\(https://github.com/(.+/awesome-[^\#]+)(\#.+)?\)'
   for line in lines
     let seg = matchstr(line, pat)
     if !empty(seg)
@@ -111,7 +111,7 @@ endfu
 
 fu! s:github_readme(identifier)
   let url = 'https://api.github.com/repos/'.a:identifier.'/readme'
-  let reply = webapi#http#get(url)
+  let reply = webapi#http#get(url, {}, {'Accept': 'application/vnd.github.v3+json'})
   return webapi#json#decode(reply.content)
 endfu
 
